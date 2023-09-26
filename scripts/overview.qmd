@@ -1,0 +1,459 @@
+---
+title: "posit::conf(2023)"
+format: html
+editor: visual
+toc: true
+---
+
+# Overview
+
+This conference was awesome. Every talk was interesting and engaging. There was a big focus on people - developing data teams and supporting other analysts. There was also a lot of code for people to get excited about.
+
+## Packages
+
+### Modeling
+
+`{tidymodels}`[^1] includes eight packages to help write models:
+
+[^1]: <https://www.tidymodels.org/>
+
+1.  `{rsample}`
+
+2.  `{parsnip}`
+
+3.  `{recipes}`
+
+4.  `{workflows}`
+
+5.  `{tune}`
+
+6.  `{yardstick}`
+
+7.  `{broom}`
+
+8.  `{dials}`
+
+I was already familiar with `{rsample}` and `{broom}` for resampling data and tidying regression output respectively. The package that will likely be of the most use is `{recipes}` which helps with the preprocessing of data before modeling. The `{tidymodels}` website has a great introduction [here](https://www.tidymodels.org/start/recipes/).
+
+### Reports
+
+#### `{epoxy}`[^2]
+
+[^2]: <https://pkg.garrickadenbuie.com/epoxy//index.html>
+
+```{r}
+library(epoxy)
+```
+
+```{epoxy}
+The average speed of the cars was **{mean(cars$speed)} mph.**
+But on average the distance traveled was only _{mean(cars$dist)}_.
+```
+
+```{r}
+movie <- list(
+  year = 1989,
+  title = "Back to the Future Part II",
+  budget = 4e+07,
+  domgross = 118450002,
+  imdb_rating = 7.8,
+  actors = c(
+    "Michael J. Fox",
+    "Christopher Lloyd",
+    "Lea Thompson",
+    "Thomas F. Wilson"
+  ),
+  runtime = 108L
+)
+```
+
+```{epoxy}
+The movie {.emph {.titlecase movie$title}}
+was released in {.strong movie$year}.
+It earned {.dollar movie$domgross}
+with a budget of {.dollar movie$budget},
+and it features movie stars
+{.and movie$actors}.
+```
+
+```{epoxy}
+{1:4}. "{letters[1:4]}" is for {c("apple", "banana", "coconut", "donut")}
+```
+
+```{r}
+mpg <- data.frame(
+    manufacturer = c("Chevrolet", "Dodge", "Ford"),
+    model = c("Malibu", "Caravan", "Expedition"),
+    cty = c(19, 7, 11),
+    hwy = c(27, 24, 17)
+)
+```
+
+```{epoxy car-name, eval=FALSE}
+- A {manufacturer} {model} gets {cty} city and {hwy} highway miles per gallon.
+```
+
+```{epoxy ref.label="car-name", .data = mpg}
+```
+
+### Writing packages
+
+#### `{testthat}`[^3]
+
+[^3]: <https://testthat.r-lib.org/>
+
+### Geocoding
+
+#### `{tidygeocode}`[^4]
+
+[^4]: <https://jessecambon.github.io/tidygeocoder/>
+
+### Animations
+
+#### `{plotly}`[^5]
+
+[^5]: <https://plotly.com/r/animations/>
+
+```{r message=FALSE, warning=FALSE}
+library(plotly)
+library(gapminder)
+
+df <- gapminder 
+fig <- df %>%
+  plot_ly(
+    x = ~gdpPercap, 
+    y = ~lifeExp, 
+    size = ~pop, 
+    color = ~continent, 
+    frame = ~year, 
+    text = ~country, 
+    hoverinfo = "text",
+    type = 'scatter',
+    mode = 'markers'
+  )
+fig <- fig %>% layout(
+    xaxis = list(
+      type = "log"
+    )
+  )
+fig <- fig %>% animation_opts(
+    1000, easing = "elastic", redraw = FALSE
+  )
+fig <- fig %>% animation_button(
+    x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+  )
+fig <- fig %>% animation_slider(
+    currentvalue = list(prefix = "YEAR ", font = list(color="red"))
+  )
+
+fig
+
+```
+
+#### `{crosstalk}`[^6]
+
+[^6]: <https://rstudio.github.io/crosstalk/>
+
+```{r message=FALSE, warning=FALSE}
+library(crosstalk)
+library(d3scatter)
+shared_mtcars <- SharedData$new(mtcars)
+bscols(widths = c(3,NA,NA),
+  list(
+    filter_checkbox("cyl", "Cylinders", shared_mtcars, ~cyl, inline = TRUE),
+    filter_slider("hp", "Horsepower", shared_mtcars, ~hp, width = "100%"),
+    filter_select("auto", "Automatic", shared_mtcars, ~ifelse(am == 0, "Yes", "No"))
+  ),
+  d3scatter(shared_mtcars, ~wt, ~mpg, ~factor(cyl), width="100%", height=250),
+  d3scatter(shared_mtcars, ~hp, ~qsec, ~factor(cyl), width="100%", height=250)
+)
+```
+
+## Learning
+
+### R4DS Online Learning Community[^7]
+
+[^7]: [How the R for Data Science (R4DS) Online Learning Community Made Me a Better Student](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040653015001GhQr) (Lydia Gibson,Data Scientist, Intel)
+
+Great talk about how the [R4DS Online Learning Community](https://rfordatasci.com/) helped a new data science develop skills. A selection of book clubs focused on learning different skills in R. Appears that they are start project clubs as well.
+
+## Quarto
+
+### Cross referencing[^8]
+
+[^8]: <https://quarto.org/docs/authoring/cross-references.html>
+
+Say you have a picture of an elephant:
+
+![Elephant](elephant.png){#fig-elephant}
+
+This picture was placed here using this inline text `![Elephant](elephant.png){#fig-elephant}`. Note that the image was located in the same folder as the script in this case the `scripts` folder.
+
+Say that we want to refer to this image in another part of the code. Like this: See @fig-elephant for an illustration. This was done by this inline code `See @fig-elephant for an illustration.`
+
+What's handy about this is that Quarto keeps track of figure numbering for you. Also this works for **tables** as well as figures. You'll need to check the documentation for how to use it.
+
+### Code annotation[^9] {#sec-code-annotation}
+
+[^9]: <https://quarto.org/docs/authoring/code-annotation.html>
+
+Say we have some code:
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+penguins |>                                     
+  mutate(                                       
+    bill_ratio = bill_depth_mm / bill_length_mm,
+    bill_area  = bill_depth_mm * bill_length_mm 
+  )     
+```
+
+Now we want to explain what we are doing here. We can use code annotation that allows unto explain what is happening in the code. We'll take the same code as above and add annotation.
+
+---
+code-annotations: select
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+penguins |>                                      # <1>
+  mutate(                                        # <2>
+    bill_ratio = bill_depth_mm / bill_length_mm, # <2>
+    bill_area  = bill_depth_mm * bill_length_mm  # <2>
+  )     
+```
+
+1.  Take `penguins`, and then,
+2.  add new columns for the bill ratio and bill area.
+
+Check the script of this for how to do this.
+
+### Chart captions and alt text
+
+```{r}
+#| fig-cap: "Peguin"
+#| fig-alt: "A line plot on a polar axis"
+#| 
+penguins %>% 
+  ggplot(aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
+  geom_point()
+```
+
+### `{typst}`
+
+https://quarto.org/docs/prerelease/1.4/typst.html
+
+## Getting stuff done
+
+### Data science teams
+
+What we need to get stuff done:[^10]
+
+[^10]: [Data Confusion to Data Intelligence](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040260867001Lqsc) (Elaine McVey, Senior Director of Analytics, Chief; David Meza, Head of Analytics - Human Capital, NASA)
+
+1.  Analysis-ready data
+
+2.  Cross-team support
+
+3.  Space for uncertainty - ~~guerrilla~~ gorilla data science tactics
+
+    1.  Scan for opportunity
+
+    2.  Show, don't tell - build a skinny version of the thing (maybe with fake data)
+
+    3.  Take data and run
+
+    4.  Nail the landing - communication
+
+    5.  Up the ante - higher risk, higher impact
+
+Successful data science teams need to maximize *speed* and *autonomy*. They should build foundations whenever possible. They should try to make one-time asks rather than repeated requests.
+
+### Bringing on new staff
+
+Some thoughts on bringing new staff into a data teams:[^11]
+
+[^11]: [The "I" in Team](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040643635001GOKW): Liz Roten, Data Scientist, Metropolitan Council
+
+1.  Make the implicit explicit
+
+    1.  Workplace culture
+
+    2.  What work days look like...
+
+    3.  What tools...
+
+    4.  What expectations around communication...
+
+2.  All knowledge is valid/valuable
+
+    1.  Ask for specifics when you get quesitons
+
+3.  Document - Make life easier for your friends
+
+    1.  $documenation \Leftrightarrow communication$
+
+### FOMOADSP - Fear of missing out on awesome data science projects[^12]
+
+[^12]: [Serenity Now, Productivity Later: Focus Your Project Stack with The Gonzalez Matrix](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040644040001Gy49) (Patrick Tennant, Senior Director of Data Science and Analytics, Meadows Mental Health Policy Institute)
+
+How do we overcome this?
+
+![FOMO matrix](fomo-matrix.png){#fig-fomo-matrix width="3514"} How do we implement this with the team? Conversation:
+
+1.  Systematic, transparent, open-minded
+
+2.  Assess contextual factors - mission/vision, competitive advantage
+
+3.  Track time and impact
+
+What's hard about this?
+
+1.  Resistance to dropping projects
+
+2.  Different perspectives about effort and value
+
+3.  Need for flexibility
+
+How does this help?
+
+1.  Links everything together
+
+2.  Aligns team
+
+3.  Teaches communication
+
+### Documenting things openly for the future[^13]
+
+[^13]: [Documenting Things: Openly for Future Us](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040649396001GF9k) (Julia Stewart Lowndes, Openscapes)
+
+1.  Have a place - write it down as you go in a modular way
+
+2.  Have an audience in mind
+
+3.  Use an inclusive tone
+
+4.  Narrate code in small chunks - see @sec-code-annotation
+
+5.  Share early
+
+6.  Design for readability and accessibility
+
+7.  Use section headers
+
+8.  Use text formatting
+
+9.  Use alt-text
+
+### R not only in production[^14]
+
+[^14]: [R Not Only In Production](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040652563001Gohl) (Kara Woo, Senior Data Science Engineer, InsightRX)
+
+> If you are afraid to make changes because it might break something, then it's already broken
+
+![Path for developing an idea in data science](images/feature-development.JPG){fig-alt="Diagram showing path from idea to continuous integration to final product"}
+
+![Continuous integration loop](images/continuous-integration.JPG){fig-alt="Continuous integration - Get new code, build Docker image, run test"}
+
+### Generative Art[^15]
+
+[^15]: [It's All About Perspective: Making a Case for Generative Art](https://events.conf.posit.co/widget/posit/positconf23/testsessioncatalog/session/1685040652795001GoKF) (Meghan Santiago Harrism Data Scientist, Prostate Cancer Clinical Trials Consortium - Memorial Sloan Kettering)
+
+1.  Improves data visualization
+
+2.  Community
+
+3.  Package development - `{artpack}` ([here](https://github.com/Meghansaha/artpack))
+
+Beautiful example of what you can do:
+
+```{r}
+library(ggplot2)
+library(purrr)
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+library(tibble)
+library(artpack)
+
+# Create a base square #
+square <- square_data(x = 0, y = 0, size = .1, group_var = TRUE)
+
+# Create square specs to be iterated on #
+n_square <- 500
+scaler <- seq(1, 100, length = n_square)
+fills <- art_pals("imagination", n = n_square)
+angles <- seq(0, 360, length = n_square)
+group_n <- group_numbers(1:n_square)
+
+# Add a random transformation for a little razzle dazzle ✨
+theta <- seq(0, 30, length = 250)
+
+list_opts <- list(
+  scaler,
+  fills,
+  angles,
+  group_n
+)
+
+df <- pmap(list_opts, ~ rotator(
+  square |>
+    mutate(
+      x = (x + ..1),
+      y = (y * ..1),
+      fill = ..2,
+      group = paste0(group, ..4)
+    ),
+  x = x, y = y, angle = ..3
+)) |>
+  list_rbind() |>
+  mutate(
+    x = x + cos(theta),
+    y = y + sin(theta)
+  )
+
+
+
+df |>
+  ggplot(aes(x = x, y = y, group = group)) +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "#000000")) +
+  geom_path(
+    color = df$fill,
+    alpha = .2
+  ) 
+```
+
+## Conference set up
+
+### Pacman
+
+![Pacman: Always keep your group open to others](images/pacman-png-25195.png)
+
+### Using ChatGPT
+
+All introductions for in rhyming verse composed by ChatGPT.
+
+### Birds of a feather
+
+The conference organized coffees and a happy hour for different groups: health care, public service, etc. I attended the Public Service Happy Hour and it was fun. I talked to people from the City of Philadelphia, Kansas Department of Health, and the CDC.
+
+## Other stuff
+
+Posit Connect
+
+Posit Workbench
+
+Docker
+
+`commitlint`[^16]
+
+[^16]: <https://github.com/conventional-changelog/commitlint>
