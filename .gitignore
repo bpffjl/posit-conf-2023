@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+/_extensions/*
+/images/*
+*.html
+*.png
+*.JPG
