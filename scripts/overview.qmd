@@ -457,3 +457,21 @@ Docker
 `commitlint`[^16]
 
 [^16]: <https://github.com/conventional-changelog/commitlint>
+
+## Tribal Exchange Network
+
+![](images/tribal-exchange-network-1.jpg)
+
+![](images/tribal-exchange-network-2.jpg)
+
+### Python and Posit
+
+![](images/python-posit-1.jpg)
+
+![](images/python-posit-2.jpg)
+
+### Posit
+
+![](images/posit-1.jpg)
+
+![](images/posit-2.jpg)
