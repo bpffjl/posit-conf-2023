@@ -1,6 +1,13 @@
 ---
 title: "posit::conf(2023)"
-format: html
+format: 
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools:
+      source: true
+      toggle: false
+      caption: none
 editor: visual
 toc: true
 ---
@@ -46,6 +53,7 @@ library(epoxy)
 ```
 
 ```{epoxy}
+#| echo: true
 The average speed of the cars was **{mean(cars$speed)} mph.**
 But on average the distance traveled was only _{mean(cars$dist)}_.
 ```
@@ -119,34 +127,33 @@ library(plotly)
 library(gapminder)
 
 df <- gapminder 
-fig <- df %>%
-  plot_ly(
-    x = ~gdpPercap, 
-    y = ~lifeExp, 
-    size = ~pop, 
-    color = ~continent, 
-    frame = ~year, 
-    text = ~country, 
-    hoverinfo = "text",
-    type = 'scatter',
-    mode = 'markers'
-  )
-fig <- fig %>% layout(
-    xaxis = list(
-      type = "log"
-    )
-  )
-fig <- fig %>% animation_opts(
-    1000, easing = "elastic", redraw = FALSE
-  )
-fig <- fig %>% animation_button(
-    x = 1, xanchor = "right", y = 0, yanchor = "bottom"
-  )
-fig <- fig %>% animation_slider(
-    currentvalue = list(prefix = "YEAR ", font = list(color="red"))
-  )
-
-fig
+ fig <- df %>%
+   plot_ly(
+     x = ~gdpPercap,
+     y = ~lifeExp,
+     size = ~pop,
+     color = ~continent,
+     frame = ~year,
+     text = ~country,
+     hoverinfo = "text",
+     type = 'scatter',
+     mode = 'markers'
+   )
+ fig <- fig %>% layout(
+     xaxis = list(
+       type = "log"
+     )
+ )
+ fig <- fig %>% animation_opts(
+     1000, easing = "elastic", redraw = FALSE
+   )
+ fig <- fig %>% animation_button(
+     x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+   )
+ fig <- fig %>% animation_slider(
+     currentvalue = list(prefix = "YEAR ", font = list(color="red"))
+   )
+ fig
 
 ```
 
@@ -458,7 +465,7 @@ Docker
 
 [^16]: <https://github.com/conventional-changelog/commitlint>
 
-## Tribal Exchange Network
+### Tribal Exchange Network
 
 ![](images/tribal-exchange-network-1.jpg)
 
