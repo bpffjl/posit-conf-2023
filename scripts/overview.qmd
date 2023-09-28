@@ -114,7 +114,7 @@ mpg <- data.frame(
 
 [^5]: <https://plotly.com/r/animations/>
 
-```{r message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(plotly)
 library(gapminder)
 
